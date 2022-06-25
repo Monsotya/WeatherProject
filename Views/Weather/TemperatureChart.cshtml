@@ -1,0 +1,58 @@
+﻿<script src = "http://code.highcharts.com/highcharts.js"></script>
+<script src = "https://code.highcharts.com/modules/exporting.js"></script>
+
+@using Highsoft.Web.Mvc.Charts
+@using Highsoft.Web.Mvc.Charts.Rendering
+@model List<Weather>
+
+@{
+    List<int> temperatures = Model.Select(x => x.Temperature).ToList();
+    List<ColumnSeriesData> values = new List<ColumnSeriesData>();
+    temperatures.ForEach(p => values.Add(new ColumnSeriesData {
+    Y = p
+  }));
+  var chartOptions = new Highcharts{
+    Title = new Title {
+        Text = "Температурні умови регіону"
+      },
+
+      XAxis = new List<XAxis> {
+        new XAxis {
+          Categories = Model.Select(x => x.Time.ToString("mm-dd hh:mm tt")).ToList<string>()
+        }
+      },
+      YAxis = new List<YAxis> {
+        new YAxis {
+          Min = Model.Select(x => x.Temperature).Min() - 2,
+            Title = new YAxisTitle {
+              Text = "Температура (градус Цельсія)"
+            }
+        }
+      },
+      Tooltip = new Tooltip {
+        HeaderFormat = "<span style='font-size:10px'>{point.key}</span><table style='font-size:12px'>",
+          PointFormat = "<tr><td style='color:{series.color};padding:0'>{series.name}: </td><td style='padding:0'><b>{point.y} С°</b></td></tr>",
+          FooterFormat = "</table>",
+          Shared = true,
+          UseHTML = true
+      },
+      PlotOptions = new PlotOptions {
+        Column = new PlotOptionsColumn {
+          PointPadding = 0.2,
+            BorderWidth = 0
+        }
+      },
+      Series = new List<Series> {
+        new ColumnSeries {
+          Name = "Температура",
+          Data = values
+          
+        }
+      }
+  };
+
+  chartOptions.ID = "chart";
+  var renderer = new HighchartsRenderer(chartOptions);
+}
+
+@Html.Raw(renderer.RenderHtml())

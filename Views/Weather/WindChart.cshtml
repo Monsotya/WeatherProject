@@ -1,0 +1,132 @@
+﻿<script src = "http://code.highcharts.com/highcharts.js"></script>
+<script src = "https://code.highcharts.com/modules/exporting.js"></script>
+
+@using Highsoft.Web.Mvc.Charts
+@using Highsoft.Web.Mvc.Charts.Rendering
+@model List<Weather>
+
+@{
+    List<string> winds = new List<string>()
+    {
+        "Східний",
+        "Пд-Сх",
+        "Південний",
+        "Пд-Зх",
+        "Західний",
+        "Пн-Зх",
+        "Північний",
+        "Пн-Сх"
+    };
+    //List<int> values1 = Model.OrderBy(x => x.WindDirection).GroupBy(x => x.WindDirection).Select(group => group.Count()).ToList();
+    //List<int> temperatures = Model.OrderBy(x => x.WindDirection).GroupBy(x => x.WindDirection).Select(group => group.Count()).ToList(); 
+    List<ColumnSeriesData> values1 = new List<ColumnSeriesData>();
+    List<ColumnSeriesData> values2 = new List<ColumnSeriesData>();
+    List<ColumnSeriesData> values3 = new List<ColumnSeriesData>();
+    List<ColumnSeriesData> values4 = new List<ColumnSeriesData>();
+    List<ColumnSeriesData> values5 = new List<ColumnSeriesData>();
+    List<ColumnSeriesData> values6 = new List<ColumnSeriesData>();
+    double allwinds = (double)Model.Count();
+    winds.ForEach(p => values1.Add(new ColumnSeriesData {
+        Y = (Model.Where(x => x.WindDirection == p && x.WindSpeed > 0 && x.WindSpeed <= 2).Count() * 100 / allwinds)
+      }));
+    winds.ForEach(p => values2.Add(new ColumnSeriesData {
+        Y = (Model.Where(x => x.WindDirection == p && x.WindSpeed > 2 && x.WindSpeed <= 4).Count() * 100 / allwinds)
+      }));
+    winds.ForEach(p => values3.Add(new ColumnSeriesData {
+        Y = (Model.Where(x => x.WindDirection == p && x.WindSpeed > 4 && x.WindSpeed <= 6).Count() * 100 / allwinds)
+      }));
+    winds.ForEach(p => values4.Add(new ColumnSeriesData {
+        Y = (Model.Where(x => x.WindDirection == p && x.WindSpeed > 6 && x.WindSpeed <= 8).Count() * 100 / allwinds)
+      }));
+    winds.ForEach(p => values5.Add(new ColumnSeriesData {
+        Y = (Model.Where(x => x.WindDirection == p && x.WindSpeed > 8 && x.WindSpeed <= 10).Count() * 100 / allwinds)
+      }));
+    winds.ForEach(p => values6.Add(new ColumnSeriesData {
+        Y = (Model.Where(x => x.WindDirection == p && x.WindSpeed > 10).Count() * 100 / allwinds)
+      }));
+    var chartOptions = new Highcharts{
+      Chart = new Chart
+      {
+          Polar = true,
+          Type = ChartType.Column 
+      },
+    Title = new Title {
+        Text = "Троянда вітрів"
+      },
+
+      XAxis = new List<XAxis> {
+        new XAxis {
+          Categories = winds,
+          TickmarkPlacement = XAxisTickmarkPlacement.On,
+          StartOnTick = true
+        }
+      },
+      YAxis = new List<YAxis> {
+        new YAxis {
+          Min = 0,
+            Title = new YAxisTitle {
+              Text = "Частота, %"
+            },
+            EndOnTick = false,
+            ReversedStacks = false,
+
+        }
+      },
+      Tooltip = new Tooltip {
+        HeaderFormat = "<span style='font-size:10px'>{point.key}</span><table style='font-size:12px'>",
+          PointFormat = "<tr><td style='color:{series.color};padding:0'>{series.name}: </td><td style='padding:0'><b>{point.y:.1f} %</b></td></tr>",
+          FooterFormat = "</table>",
+          Shared = true,
+          UseHTML = true
+      },
+      PlotOptions = new PlotOptions {
+        Column = new PlotOptionsColumn {
+          PointPadding = 0,
+            BorderWidth = 0
+        },
+        Series = new PlotOptionsSeries
+        {
+            Stacking = PlotOptionsSeriesStacking.Normal,
+            PointPlacement = new PointPlacement { PointPlacementEnum = PointPlacementEnum.On }
+        }
+      },
+
+      Pane = new Pane
+      {
+          Size = "85%",
+          StartAngle = 90
+      },
+      Series = new List<Series> {
+        new ColumnSeries {
+          Name = "0.5-2 м/с",
+          Data = values1
+        },
+        new ColumnSeries {
+          Name = "2-4 м/с",
+          Data = values2
+        },
+        new ColumnSeries {
+          Name = "4-6 м/с",
+          Data = values3
+        },
+        new ColumnSeries {
+          Name = "6-8 м/с",
+          Data = values4
+        },
+        new ColumnSeries {
+          Name = "8-10 м/с",
+          Data = values5
+        },
+        new ColumnSeries {
+          Name = "> 10 м/с",
+          Data = values6
+        }
+      }
+  };
+
+    chartOptions.ID = "chart";
+    var renderer = new HighchartsRenderer(chartOptions);
+    <p>Відсоток штилів @((Model.Where( x => x.WindSpeed == 0).Count() * 100 / allwinds).ToString("F")) %</p>
+}
+
+@Html.Raw(renderer.RenderHtml())

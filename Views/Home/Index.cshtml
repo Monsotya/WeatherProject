@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model string
+<div class="text-center">
+    <h1 class="display-4">Ласкаво просимо!</h1>
+    <p>Оберіть регіон і проміжок часу</p>
+    @using (Html.BeginForm())
+    {
+        <p>Від:</p>
+        
+        <input name="dateFrom" type="datetime-local" value="2012-01-01T00:00"  />
+        <p>До:</p>
+         <input name="dateTo" type="datetime-local" value="2012-02-01T00:00"  /><br /><br />
+        @Html.DropDownList("Cities", new List<SelectListItem>
+{
+   new SelectListItem{ Text="Дніпро", Value = "dnipro" },
+   new SelectListItem{ Text="Донецьк", Value = "donetsk" },
+   new SelectListItem{ Text="Івано-Франківськ", Value = "ivano-frankivsk" },
+   new SelectListItem{ Text="Київ", Value = "kyiv" },
+   new SelectListItem{ Text="Кривий Ріг", Value = "kryvyi_rih" },
+   new SelectListItem{ Text="Луганськ", Value = "luhansk" },
+   new SelectListItem{ Text="Лвів", Value = "lviv" },
+   new SelectListItem{ Text="Одеса", Value = "odesa" },
+   new SelectListItem{ Text="Сімферополь", Value = "simferopol" },
+   new SelectListItem{ Text="Харків", Value = "kharkiv" },
+})
+        <br />
+        <br />
+        <input asp-controller="Weather" asp-action="ChooseConditionsForWeather" type="submit"   value="Обрати"/>
+    }
+    <br />
+    <p>@Model</p>
+</div>

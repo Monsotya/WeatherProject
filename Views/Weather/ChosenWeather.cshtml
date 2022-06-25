@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model WeatherProject.ViewModel.WeatherViewModel  
+ 
+<input type="button"
+         value="Вивести графік температур"
+         onclick="location.href='@Url.Action("TemperatureChart", "Weather")'" />
+<input type="button"
+         value="Вивести графік тривалості температурних режимів"
+         onclick="location.href='@Url.Action("TemperatureTableChart", "Weather")'" />
+<input type="button"
+         value="Вивести троянду вітрів"
+         onclick="location.href='@Url.Action("WindChart", "Weather")'" />
+<input type="button"
+         value="Вивести діаграму тривалості режимів вітрової активності"
+         onclick="location.href='@Url.Action("WindTableChart", "Weather")'" />
+<input type="button"
+         value="Згенерувати звіт"
+         onclick="location.href='@Url.Action("GeneratePDF", "Weather")'" />
+<input type="button"
+         value="Відправити по пошті"
+         onclick="location.href='@Url.Action("SendEmail", "Weather")'" />
+<table class="table">
+    <tr>
+        <th>Час</th>
+        <th>Напрям вітру</th>
+        <th>Видимість</th>
+        <th>Температура</th>
+        <th>Код погоди</th>
+        <th>Швидкість вітру</th>
+        <th>Кількість хмар</th>
+        <th>Нижня границя хмар</th>
+    </tr>
+    @foreach(var item in Model.PaginatedWeathers())
+    {
+        <tr>
+            <th>@Html.DisplayFor(modelItem => item.Time)</th>
+            <th>@Html.DisplayFor(modelItem => item.WindDirection)</th>
+            <th>@Html.DisplayFor(modelItem => item.Visibility)</th>
+            <th>@Html.DisplayFor(modelItem => item.Temperature)</th>
+            <th>@Html.DisplayFor(modelItem => item.WeatherCode)</th>
+            <th>@Html.DisplayFor(modelItem => item.WindSpeed)</th>
+            <th>@Html.DisplayFor(modelItem => item.CloudNumber)</th>
+            <th>@Html.DisplayFor(modelItem => item.CloudBottomLine)</th>
+        </tr>
+        
+    }
+</table>
+<ul class="pagination">  
+        @for (int i = 1; i <= Model.PageCount(); i++)  
+        {  
+            <li class="@(i == Model.CurrentPage ? "page-item active" : "page-item")">  
+                <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>  
+            </li>  
+        }  
+    </ul>  

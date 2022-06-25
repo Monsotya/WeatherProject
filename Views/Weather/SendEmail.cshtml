@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model string
+<div class="text-center">
+    
+    <p>Введіть пошту</p>
+    @using (Html.BeginForm())
+    {
+         <input name="email" type="text"  />
+        
+        <br />
+        <br />
+        <input asp-controller="Weather" asp-action="SendEmailConfirm" type="submit"   value="Відправити звіт"/>
+    }
+    <br />
+    <p>@Model</p>
+</div>
